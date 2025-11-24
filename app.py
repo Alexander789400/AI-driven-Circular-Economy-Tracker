@@ -17,7 +17,7 @@ with open('scaler.pkl', 'rb') as f:
 with open('label_encoder_sector.pkl', 'rb') as f:
     le_sector = pickle.load(f)
 
-# Sector mapping for user display
+# Sector mapping
 sectors = {
     "Automotive": 0,
     "Electronics": 1,
@@ -26,6 +26,15 @@ sectors = {
     "Textiles": 4
 }
 
+cols_to_scale = [
+    'production_volume_units',
+    'raw_material_kg',
+    'recycled_material_kg',
+    'waste_kg',
+    'energy_kwh',
+    'water_liters'
+]
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     prediction_class = None
@@ -33,36 +42,57 @@ def index():
     details = None
     
     if request.method == 'POST':
-        # Get form data
-        feature_values = []
-        for i in range(1, 10):
-            value = request.form.get(f'feature{i}')
-            try:
-                feature_values.append(float(value))
-            except:
-                feature_values.append(0.0)
-        
-        sector = request.form.get('sector')
-        sector_encoded = sectors.get(sector, 0)
-        feature_values.append(sector_encoded)
+        try:
+            # Get feature inputs from user
+            production_volume_units = float(request.form['production_volume_units'])
+            raw_material_kg = float(request.form['raw_material_kg'])
+            recycled_material_kg = float(request.form['recycled_material_kg'])
+            waste_kg = float(request.form['waste_kg'])
+            energy_kwh = float(request.form['energy_kwh'])
+            water_liters = float(request.form['water_liters'])
+            machine_downtime_hours = float(request.form['machine_downtime_hours'])
+            sector = request.form['sector']
 
-        # Convert to numpy array and scale
-        features_array = np.array(feature_values).reshape(1, -1)
-        features_scaled = scaler.transform(features_array)
+            # Calculate derived features
+            material_recovery_rate = recycled_material_kg / (recycled_material_kg + waste_kg)  # avoid divide by zero
+            machine_downtime_ratio = (machine_downtime_hours * 60) / 1440  # convert hours to ratio
 
-        # Predictions
-        prediction_class_num = logistic_model.predict(features_scaled)[0]
-        prediction_class = le_sector.inverse_transform([prediction_class_num])[0]
-        prediction_regression = ridge_model.predict(features_scaled)[0]
+            # Encode sector
+            sector_encoded = sectors.get(sector, 0)
 
-        details = {
-            "Classification (Sector)": prediction_class,
-            "Regression (Predicted Value)": round(prediction_regression, 2)
-        }
+            # Prepare feature array
+            features = [
+                production_volume_units,
+                raw_material_kg,
+                recycled_material_kg,
+                waste_kg,
+                energy_kwh,
+                water_liters,
+                material_recovery_rate,
+                sector_encoded,
+                machine_downtime_ratio
+            ]
+
+            # Scale required features
+            features_scaled = np.array(features).reshape(1, -1)
+            features_scaled[:, :6] = scaler.transform(features_scaled[:, :6])  # scale only first 6 features
+
+            # Predictions
+            prediction_class_num = logistic_model.predict(features_scaled)[0]
+            prediction_class = "High waste" if prediction_class_num == 1 else "Low waste"
+            prediction_regression = ridge_model.predict(features_scaled)[0]
+
+            details = {
+                "Classification (Waste Level)": prediction_class,
+                "Regression (Predicted Value)": round(prediction_regression, 2),
+                "Material Recovery Rate": round(material_recovery_rate, 3),
+                "Machine Downtime Ratio": round(machine_downtime_ratio, 3)
+            }
+
+        except Exception as e:
+            details = {"Error": str(e)}
 
     return render_template('index.html', sectors=sectors.keys(),
-                           prediction_class=prediction_class,
-                           prediction_regression=prediction_regression,
                            details=details)
 
 if __name__ == '__main__':

@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('/static/images.jpg');
+            background-image: url('/static/image.jpg');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -18,24 +18,30 @@
             height: 100vh;
         }
         .container {
-            background: rgba(255,255,255,0.9);
+            background: rgba(231, 215, 215, 0.95);
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            max-width: 500px;
+            max-width: 550px;
             width: 100%;
         }
         h1 {
             text-align: center;
             margin-bottom: 20px;
-            color: #444;
+            color: #023a36;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
         }
         input, select, button {
             width: 100%;
             padding: 10px;
-            margin: 8px 0;
+            margin-top: 5px;
             border-radius: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid #b52121;
+            box-sizing: border-box;
         }
         button {
             background-color: #4CAF50;
@@ -43,9 +49,10 @@
             border: none;
             cursor: pointer;
             font-size: 16px;
+            margin-top: 15px;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #013c04;
         }
         .results {
             margin-top: 20px;
@@ -59,23 +66,48 @@
     <div class="container">
         <h1>AI-Driven-Circular-Economy-Tracker</h1>
         <form method="POST">
-            {% for i in range(1, 10) %}
-                <input type="text" name="feature{{i}}" placeholder="Feature {{i}}" required>
-            {% endfor %}
+            <label for="production_volume_units">Production Volume (units)</label>
+            <input type="number" step="any" name="production_volume_units" required>
+
+            <label for="raw_material_kg">Raw Material Usage (kg)</label>
+            <input type="number" step="any" name="raw_material_kg" required>
+
+            <label for="recycled_material_kg">Recycled Material Usage (kg)</label>
+            <input type="number" step="any" name="recycled_material_kg" required>
+
+            <label for="waste_kg">Material Wasted (kg)</label>
+            <input type="number" step="any" name="waste_kg" required>
+
+            <label for="energy_kwh">Energy Consumption (kWh)</label>
+            <input type="number" step="any" name="energy_kwh" required>
+
+            <label for="water_liters">Water Usage (liters)</label>
+            <input type="number" step="any" name="water_liters" required>
+
+            <label for="machine_downtime_hours">Machine Downtime (hours)</label>
+            <input type="number" step="any" name="machine_downtime_hours" required>
+
+            <label for="sector">Sectors</label>
             <select name="sector" required>
                 <option value="" disabled selected>Select Sector</option>
                 {% for sector in sectors %}
                     <option value="{{ sector }}">{{ sector }}</option>
                 {% endfor %}
             </select>
+
             <button type="submit">Predict</button>
         </form>
 
         {% if details %}
         <div class="results">
-            <h3>Prediction Details</h3>
-            <p><strong>Classification value:</strong> {{ details['Classification (Sector)'] }}</p>
-            <p><strong>Regression Value:</strong> {{ details['Regression (Predicted Value)'] }}</p>
+            {% if details.Error %}
+                <p style="color:red;">Error: {{ details.Error }}</p>
+            {% else %}
+                <p><strong>Waste Level (Classification):</strong> {{ details['Classification (Waste Level)'] }}</p>
+                <p><strong>Circularity Score (Regression):</strong> {{ details['Regression (Predicted Value)'] }}</p>
+                <p><strong>Material Recovery Rate:</strong> {{ details['Material Recovery Rate'] }}</p>
+                <p><strong>Machine Downtime Ratio:</strong> {{ details['Machine Downtime Ratio'] }}</p>
+            {% endif %}
         </div>
         {% endif %}
     </div>
