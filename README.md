@@ -51,7 +51,7 @@ best_logistic_model.pkl
 
 scaler.pkl
 
-Encoders (if applicable)
+label_encoder_sector.pkl
 
 7️. Deployment (Flask)
 
