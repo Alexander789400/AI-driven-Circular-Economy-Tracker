@@ -83,8 +83,8 @@ def index():
             prediction_regression = ridge_model.predict(features_scaled)[0]
 
             details = {
-                "Classification (Waste Level)": prediction_class,
-                "Regression (Predicted Value)": round(prediction_regression, 2),
+                "Waste Level (Classification)": prediction_class,
+                "Circularity Score (Regression)": round(prediction_regression, 2),
                 "Material Recovery Rate": round(material_recovery_rate, 3),
                 "Machine Downtime Ratio": round(machine_downtime_ratio, 3)
             }
