@@ -67,25 +67,25 @@
         <h1>AI-Driven-Circular-Economy-Tracker</h1>
         <form method="POST">
             <label for="production_volume_units">Production Volume (units)</label>
-            <input type="number" step="any" name="production_volume_units" required>
+            <input type="number" step="any" min="0" name="production_volume_units" required>
 
             <label for="raw_material_kg">Raw Material Usage (kg)</label>
-            <input type="number" step="any" name="raw_material_kg" required>
+            <input type="number" step="any" min="0" name="raw_material_kg" required>
 
             <label for="recycled_material_kg">Recycled Material Usage (kg)</label>
-            <input type="number" step="any" name="recycled_material_kg" required>
+            <input type="number" step="any" min="0" name="recycled_material_kg" required>
 
             <label for="waste_kg">Material Wasted (kg)</label>
-            <input type="number" step="any" name="waste_kg" required>
+            <input type="number" step="any" min="0" name="waste_kg" required>
 
             <label for="energy_kwh">Energy Consumption (kWh)</label>
-            <input type="number" step="any" name="energy_kwh" required>
+            <input type="number" step="any" min="0" name="energy_kwh" required>
 
             <label for="water_liters">Water Usage (liters)</label>
-            <input type="number" step="any" name="water_liters" required>
+            <input type="number" step="any" min="0" name="water_liters" required>
 
             <label for="machine_downtime_hours">Machine Downtime (hours)</label>
-            <input type="number" step="any" name="machine_downtime_hours" required>
+            <input type="number" step="any" min="0" name="machine_downtime_hours" required>
 
             <label for="sector">Sectors</label>
             <select name="sector" required>
@@ -103,8 +103,8 @@
             {% if details.Error %}
                 <p style="color:red;">Error: {{ details.Error }}</p>
             {% else %}
-                <p><strong>Waste Level (Classification):</strong> {{ details['Classification (Waste Level)'] }}</p>
-                <p><strong>Circularity Score (Regression):</strong> {{ details['Regression (Predicted Value)'] }}</p>
+                <p><strong>Waste Level (Classification):</strong> {{ details['Waste Level (Classification)'] }}</p>
+                <p><strong>Circularity Score (Regression):</strong> {{ details['Circularity Score (Regression)'] }}</p>
                 <p><strong>Material Recovery Rate:</strong> {{ details['Material Recovery Rate'] }}</p>
                 <p><strong>Machine Downtime Ratio:</strong> {{ details['Machine Downtime Ratio'] }}</p>
             {% endif %}
