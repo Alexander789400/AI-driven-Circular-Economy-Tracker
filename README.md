@@ -19,7 +19,7 @@ Dropping redundant columns
 Encoding categorical variables 
 Scaling numerical variables using StandardScaler
 
-2️.Train-Test Split (Before Scaling)
+2️. Train-Test Split (Before Scaling)
 
 Ensures no data leakage.
 
@@ -58,13 +58,13 @@ Encoders (if applicable)
 A Flask API receives user input, applies preprocessing, and outputs predictions.
 
 ## Model Performance Summary :
-### Ridge Regression :
+### Ridge Regression : (for Rehression Problem)
 
 Good performance with reduced overfitting
 
 Stable because of L2 regularization
 
-### Logistic Regression :
+### Logistic Regression : (for Classification Problem)
 
 Efficient for binary waste prediction
 
