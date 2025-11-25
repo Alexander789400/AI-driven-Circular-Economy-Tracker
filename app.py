@@ -74,16 +74,7 @@ def index():
                 recommendations.append("Optimize raw material usage to reduce waste.")
             else:
                 recommendations.append("Waste level is low — maintain current efficiency.")
-
-            if material_recovery_rate < 0.5:
-                recommendations.append("Improve material recovery by increasing recycled inputs.")
-
-            if machine_downtime_ratio > 0.3:
-                recommendations.append("High downtime — schedule maintenance or improve machine reliability.")
-
-            if energy_kwh > 10000:
-                recommendations.append("High energy usage — consider energy-efficient machinery.")
-
+            
             # ----- Circularity Score Recommendations -----
             if reg_pred < 0.4:
                 recommendations.append("Circularity score is low — prioritize recycling and material recovery.")
@@ -95,6 +86,15 @@ def index():
             else:
                 recommendations.append("Excellent circularity performance — sustain advanced recovery strategies.")
                 recommendations.append("Document your best practices to maintain high circular performance.")
+
+            if material_recovery_rate < 0.5:
+                recommendations.append("Improve material recovery by increasing recycled inputs.")
+
+            if machine_downtime_ratio > 0.3:
+                recommendations.append("High downtime — schedule maintenance or improve machine reliability.")
+
+            if energy_kwh > 10000:
+                recommendations.append("High energy usage — consider energy-efficient machinery.")
 
 
             # Final output
