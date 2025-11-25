@@ -45,6 +45,7 @@ def index():
 
             # Feature order (correct!)
             X = np.array([
+                sector_encoded,
                 production_volume_units,
                 raw_material_kg,
                 recycled_material_kg,
@@ -52,7 +53,6 @@ def index():
                 energy_kwh,
                 water_liters,
                 material_recovery_rate,
-                sector_encoded,
                 machine_downtime_ratio
             ]).reshape(1, -1)
 
