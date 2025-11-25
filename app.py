@@ -17,7 +17,7 @@ with open('scaler.pkl', 'rb') as f:
 with open('label_encoder_sector.pkl', 'rb') as f:
     le_sector = pickle.load(f)
 
-# Sectors displayed to user
+# Sectors shown in dropdown
 sectors = ["Automotive", "Electronics", "Manufacturing", "FoodProcessing", "Textiles"]
 
 @app.route('/', methods=['GET', 'POST'])
@@ -26,7 +26,7 @@ def index():
 
     if request.method == "POST":
         try:
-            # Get form inputs
+            # User Inputs
             production_volume_units = float(request.form['production_volume_units'])
             raw_material_kg = float(request.form['raw_material_kg'])
             recycled_material_kg = float(request.form['recycled_material_kg'])
@@ -36,14 +36,14 @@ def index():
             machine_downtime_hours = float(request.form['machine_downtime_hours'])
             sector_name = request.form['sector']
 
-            # Derived features
+            # Derived Features
             material_recovery_rate = recycled_material_kg / (recycled_material_kg + waste_kg + 1e-9)
             machine_downtime_ratio = (machine_downtime_hours * 60) / 1440
 
-            # Sector Encoding (correct)
+            # Sector encoding
             sector_encoded = le_sector.transform([sector_name])[0]
 
-            # Ordered feature vector (correct ordering!)
+            # Feature order (correct!)
             X = np.array([
                 production_volume_units,
                 raw_material_kg,
@@ -56,28 +56,29 @@ def index():
                 machine_downtime_ratio
             ]).reshape(1, -1)
 
-            # Scale only first 6 features
+            # Scale first 6 features
             X_scaled = X.copy()
             X_scaled[:, :6] = scaler.transform(X_scaled[:, :6])
 
-            # Predictions
-            class_pred_num = logistic_model.predict(X_scaled)[0]
+            # CLASSIFICATION
+            prob = logistic_model.predict_proba(X_scaled)[0][1]
+            class_pred_num = 1 if prob >= 0.5 else 0
             class_pred = "High waste" if class_pred_num == 1 else "Low waste"
 
-            reg_pred = ridge_model.predict(X_scaled)[0]
+            # Regression prediction (0–1 normal range)
+            reg_pred = float(ridge_model.predict(X_scaled)[0])
 
-            # ----- FIX: ENSURE CIRCULARITY SCORE IN 0–1 FORMAT -----
-            reg_pred = float(reg_pred)  # make sure it stays between 0 and 1
-
-            # Recommendations
+            # Recommendations List
             recommendations = []
 
+            # Waste classification recommendations
             if class_pred_num == 1:
                 recommendations.append("High waste detected — increase recycling processes.")
                 recommendations.append("Optimize raw material usage to reduce waste.")
             else:
                 recommendations.append("Waste level is low — maintain current efficiency.")
-            
+
+            # Circularity score recommendations
             if reg_pred < 0.4:
                 recommendations.append("Circularity score is low — prioritize recycling and material recovery.")
                 recommendations.append("Consider adopting closed-loop material cycles to improve circularity.")
@@ -89,18 +90,22 @@ def index():
                 recommendations.append("Excellent circularity performance — sustain advanced recovery strategies.")
                 recommendations.append("Document your best practices to maintain high circular performance.")
 
+            # Material recovery suggestions
             if material_recovery_rate < 0.5:
                 recommendations.append("Improve material recovery by increasing recycled inputs.")
 
+            # Downtime suggestions
             if machine_downtime_ratio > 0.3:
                 recommendations.append("High downtime — schedule maintenance or improve machine reliability.")
 
+            # Energy consumption suggestions
             if energy_kwh > 10000:
                 recommendations.append("High energy usage — consider energy-efficient machinery.")
 
+            # Final details dictionary
             details = {
                 "Waste Level (Classification)": class_pred,
-                "Circularity Score (Regression)": round(reg_pred, 3),   # <-- FIXED (0–1)
+                "Circularity Score (Regression)": round(reg_pred, 3),
                 "Material Recovery Rate": round(material_recovery_rate, 3),
                 "Machine Downtime Ratio": round(machine_downtime_ratio, 3),
                 "Recommendations": recommendations
