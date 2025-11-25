@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Driven-Circular-Economy-Tracker</title>
+    <title>AI-Driven Circular Economy Tracker</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,100 +17,165 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            backdrop-filter: blur(2px);
         }
-        .container {
-            background: rgba(231, 215, 215, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            max-width: 550px;
-            width: 100%;
+
+        /* MAIN WRAPPER - 2 columns */
+        .wrapper {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
         }
+
+        /* ---------- GLOWING BORDER FORM ---------- */
+        .form-box {
+            background: rgba(255,255,255,0.92);
+            padding: 25px;
+            border-radius: 18px;
+            width: 420px;
+            box-shadow: 0 0 20px rgba(0,255,200,0.5);
+            border: 2px solid rgba(0,255,200,0.9);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 12px #00ffd0; }
+            to   { box-shadow: 0 0 22px #00c8ff; }
+        }
+
         h1 {
             text-align: center;
-            margin-bottom: 20px;
-            color: #023a36;
+            color: #045c4e;
+            margin-bottom: 15px;
         }
+
         label {
             font-weight: bold;
+            margin-top: 12px;
             display: block;
-            margin-top: 10px;
         }
+
         input, select, button {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
-            border-radius: 8px;
-            border: 1px solid #b52121;
-            box-sizing: border-box;
+            border-radius: 7px;
+            border: 1px solid #444;
+            font-size: 15px;
         }
+
         button {
-            background-color: #4CAF50;
+            background-color: #0a7a22;
             color: white;
-            border: none;
+            margin-top: 18px;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 15px;
+            transition: 0.3s;
         }
+
         button:hover {
-            background-color: #013c04;
+            background-color: #064f14;
         }
-        .results {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f0f0f0;
-            border-radius: 10px;
+
+        /* -------- RIGHT SIDE PREDICTION BOX -------- */
+        .results-box {
+            width: 330px;
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 18px;
+            border-left: 6px solid #008f6b;
+            box-shadow: 0 0 18px rgba(0,0,0,0.25);
+            animation: fadeIn 1s ease;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .results-box h3 {
+            color: #024139;
+            margin-top: 0;
+        }
+
+        .results-box ul {
+            padding-left: 18px;
+        }
+
+        .results-box li {
+            margin-bottom: 6px;
+        }
+
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>AI-Driven-Circular-Economy-Tracker</h1>
-        <form method="POST">
-            <label for="production_volume_units">Production Volume (units)</label>
-            <input type="number" step="any" min="0" name="production_volume_units" required>
 
-            <label for="raw_material_kg">Raw Material Usage (kg)</label>
-            <input type="number" step="any" min="0" name="raw_material_kg" required>
+    <div class="wrapper">
 
-            <label for="recycled_material_kg">Recycled Material Usage (kg)</label>
-            <input type="number" step="any" min="0" name="recycled_material_kg" required>
+        <!-- LEFT FORM -->
+        <div class="form-box">
+            <h1>AI Circular Economy Tracker</h1>
+            <h1>Predict Circularity Score</h1>
 
-            <label for="waste_kg">Material Wasted (kg)</label>
-            <input type="number" step="any" min="0" name="waste_kg" required>
+            <form method="POST">
 
-            <label for="energy_kwh">Energy Consumption (kWh)</label>
-            <input type="number" step="any" min="0" name="energy_kwh" required>
+                <label>Production Volume (units)</label>
+                <input type="number" step="any" name="production_volume_units" required>
 
-            <label for="water_liters">Water Usage (liters)</label>
-            <input type="number" step="any" min="0" name="water_liters" required>
+                <label>Raw Material Usage (kg)</label>
+                <input type="number" step="any" name="raw_material_kg" required>
 
-            <label for="machine_downtime_hours">Machine Downtime (hours)</label>
-            <input type="number" step="any" min="0" name="machine_downtime_hours" required>
+                <label>Recycled Material Usage (kg)</label>
+                <input type="number" step="any" name="recycled_material_kg" required>
 
-            <label for="sector">Sectors</label>
-            <select name="sector" required>
-                <option value="" disabled selected>Select Sector</option>
-                {% for sector in sectors %}
-                    <option value="{{ sector }}">{{ sector }}</option>
-                {% endfor %}
-            </select>
+                <label>Material Waste (kg)</label>
+                <input type="number" step="any" name="waste_kg" required>
 
-            <button type="submit">Predict</button>
-        </form>
+                <label>Energy Consumption (kWh)</label>
+                <input type="number" step="any" name="energy_kwh" required>
 
+                <label>Water Usage (liters)</label>
+                <input type="number" step="any" name="water_liters" required>
+
+                <label>Machine Downtime (hours)</label>
+                <input type="number" step="any" name="machine_downtime_hours" required>
+
+                <label>Sector</label>
+                <select name="sector" required>
+                    <option value="" disabled selected>Select Sector</option>
+                    {% for s in sectors %}
+                        <option value="{{ s }}">{{ s }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit">Predict</button>
+            </form>
+        </div>
+
+        <!-- RIGHT SIDE PREDICTIONS -->
         {% if details %}
-        <div class="results">
+        <div class="results-box">
             {% if details.Error %}
                 <p style="color:red;">Error: {{ details.Error }}</p>
             {% else %}
-                <p><strong>Waste Level (Classification):</strong> {{ details['Waste Level (Classification)'] }}</p>
-                <p><strong>Circularity Score (Regression):</strong> {{ details['Circularity Score (Regression)'] }}</p>
+                <h3>Predicted Results</h3>
+                <p><strong>Waste Level:</strong> {{ details['Waste Level (Classification)'] }}</p>
+                <p><strong>Circularity Score:</strong> {{ details['Circularity Score (Regression)'] }}</p>
                 <p><strong>Material Recovery Rate:</strong> {{ details['Material Recovery Rate'] }}</p>
                 <p><strong>Machine Downtime Ratio:</strong> {{ details['Machine Downtime Ratio'] }}</p>
+
+                <h3>Recommendations</h3>
+                <ul>
+                    {% for rec in details['Recommendations'] %}
+                        <li>{{ rec }}</li>
+                    {% endfor %}
+                </ul>
             {% endif %}
         </div>
         {% endif %}
+
     </div>
+
 </body>
 </html>
