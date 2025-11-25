@@ -66,6 +66,9 @@ def index():
 
             reg_pred = ridge_model.predict(X_scaled)[0]
 
+            # ----- FIX: ENSURE CIRCULARITY SCORE IN 0–1 FORMAT -----
+            reg_pred = float(reg_pred)  # make sure it stays between 0 and 1
+
             # Recommendations
             recommendations = []
 
@@ -75,7 +78,6 @@ def index():
             else:
                 recommendations.append("Waste level is low — maintain current efficiency.")
             
-            # ----- Circularity Score Recommendations -----
             if reg_pred < 0.4:
                 recommendations.append("Circularity score is low — prioritize recycling and material recovery.")
                 recommendations.append("Consider adopting closed-loop material cycles to improve circularity.")
@@ -96,11 +98,9 @@ def index():
             if energy_kwh > 10000:
                 recommendations.append("High energy usage — consider energy-efficient machinery.")
 
-
-            # Final output
             details = {
                 "Waste Level (Classification)": class_pred,
-                "Circularity Score (Regression)": round(reg_pred, 2),
+                "Circularity Score (Regression)": round(reg_pred, 3),   # <-- FIXED (0–1)
                 "Material Recovery Rate": round(material_recovery_rate, 3),
                 "Machine Downtime Ratio": round(machine_downtime_ratio, 3),
                 "Recommendations": recommendations
