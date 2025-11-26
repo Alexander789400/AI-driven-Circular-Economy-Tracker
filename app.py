@@ -67,7 +67,7 @@ def index():
 
             # Regression prediction (0–1 normal range)
             reg_pred = float(ridge_model.predict(X_scaled)[0])
-            reg_pred = max(reg_pred, 0)
+            reg_pred = max(reg_pred, 0.0)
 
             # Recommendations List
             recommendations = []
